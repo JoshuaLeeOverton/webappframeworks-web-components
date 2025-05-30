@@ -62,7 +62,7 @@ export default class TodoItem extends HTMLElement {
     this.dispatchEvent(
       new CustomEvent("todo-click", {
         // Changed from "onClick" to "itemAction" for clarity
-        detail: action, // This will be "edit" or "delete"
+        detail: { action, id: this.id }, // This will be "edit" or "delete"
         bubbles: true,
         composed: true
       })
