@@ -4,7 +4,7 @@ import { TodoItem } from "../modules/src/index"
 import "./App.css"
 import { useEffect, useRef } from "react"
 import { useRequest } from "./hooks/useRequest"
-import { createTodo, getTodos, deleteTodo } from "./handlers/todos"
+import { createTodo, getTodos, deleteTodo, updateTodo } from "./handlers/todos"
 
 function App() {
   const cardRef = useRef(null)
@@ -32,11 +32,14 @@ function App() {
   const handleTodoClick = (e) => {
     // e.target is the <todo-item> that dispatched the event
     const title = e.target.getAttribute("title")
-    const { action, id } = e.detail // if you dispatch detail from your custom event
+    const { action, id, payload } = e.detail // if you dispatch detail from your custom event
 
     switch (action) {
       case "delete":
         deleteTodo(id, refetch)
+        break
+      case "update":
+        updateTodo(id, { ...payload })
         break
       default:
         console.error("Unhandled action", title)

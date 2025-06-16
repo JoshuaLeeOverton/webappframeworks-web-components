@@ -35,7 +35,7 @@ export const getTodos = (response) => {
  * @param {string} id
  * @returns {object}
  */
-export const getTodosById = (id) => {}
+export const getTodosById = () => {}
 
 /**
  * Create a todo
@@ -72,7 +72,26 @@ export const createTodo = async (todo, callback) => {
  * @param {object} todo
  * @returns {object}
  */
-export const updateTodo = (id, todo) => {}
+export const updateTodo = async (id, todo) => {
+  try {
+    if (id) {
+      const response = await axios({
+        method: "PATCH",
+        url: import.meta.env.VITE_TODO_API_URL,
+        params: { id },
+        data: { ...todo }
+      })
+
+      if (response?.status !== 204) {
+        throw new Error("Failed to delete todo")
+      }
+    } else {
+      throw new Error("Invalid Todo ID")
+    }
+  } catch (error) {
+    console.error(error?.message || error)
+  }
+}
 
 /**
  * Delete a todo by its id
