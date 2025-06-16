@@ -4,14 +4,7 @@ import { TodoItem } from "../modules/src/index"
 import "./App.css"
 import { useEffect, useRef } from "react"
 import { useRequest } from "./hooks/useRequest"
-import { getTodos } from "./handlers/todos"
-
-const handleTodoClick = (e) => {
-  // e.target is the <todo-item> that dispatched the event
-  const title = e.target.getAttribute("title")
-  const action = e.detail // if you dispatch detail from your custom event
-  console.log("Custom todo-click event:", { title, action, event: e })
-}
+import { createTodo, getTodos, deleteTodo } from "./handlers/todos"
 
 function App() {
   const cardRef = useRef(null)
@@ -36,6 +29,30 @@ function App() {
     }
   }, [])
 
+  const handleTodoClick = (e) => {
+    // e.target is the <todo-item> that dispatched the event
+    const title = e.target.getAttribute("title")
+    const { action, id } = e.detail // if you dispatch detail from your custom event
+
+    switch (action) {
+      case "delete":
+        deleteTodo(id, refetch)
+        break
+      default:
+        console.error("Unhandled action", title)
+    }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const value = e?.target[0]?.value || null
+
+    if (value) {
+      await createTodo({ title: value }, refetch)
+    }
+  }
+
   return (
     <>
       <div>
@@ -46,7 +63,33 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>New Todo</label>
+        </div>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <input
+            style={{
+              marginRight: "8px"
+            }}
+            type="text"
+          ></input>
+          <button
+            style={{
+              backgroundColor: "#3b3b3b",
+              borderColor: "#858585",
+              borderTopLeftRadius: "0px",
+              borderBottomLeftRadius: "0px",
+              paddingTop: "4px",
+              paddingBottom: "4px",
+              paddingLeft: "15px",
+              paddingRight: "15px"
+            }}
+          >
+            <span style={{ height: "inherit", fontSize: "14px" }}>Add</span>
+          </button>
+        </div>
+      </form>
       <div className="card" ref={cardRef}>
         {loading ? (
           <p>loading...</p>

@@ -1,3 +1,5 @@
+import axios from "axios"
+
 /**
  * Get All Todos
  *
@@ -41,7 +43,27 @@ export const getTodosById = (id) => {}
  * @param {object} todo
  * @returns {object}
  */
-export const createTodo = (todo) => {}
+export const createTodo = async (todo, callback) => {
+  try {
+    if (todo.title) {
+      const response = await axios({
+        method: "post",
+        url: import.meta.env.VITE_TODO_API_URL,
+        data: { ...todo }
+      })
+
+      if (response?.data && response.data.status === "ok") {
+        callback(response)
+      } else {
+        throw new Error("Failed to create todo")
+      }
+    } else {
+      throw new Error("Invalid Todo")
+    }
+  } catch (error) {
+    console.error(error?.message || error)
+  }
+}
 
 /**
  * update a todo using the id of the todo you are updating and the new data
@@ -57,5 +79,25 @@ export const updateTodo = (id, todo) => {}
  *
  * @param {string} id
  */
-export const deleteTodo = (id) => {}
+export const deleteTodo = async (id, callback) => {
+  try {
+    if (id) {
+      const response = await axios({
+        method: "delete",
+        url: import.meta.env.VITE_TODO_API_URL,
+        params: { id }
+      })
+
+      if (response?.status === 204) {
+        callback(response)
+      } else {
+        throw new Error("Failed to delete todo")
+      }
+    } else {
+      throw new Error("Invalid Todo ID")
+    }
+  } catch (error) {
+    console.error(error?.message || error)
+  }
+}
 
